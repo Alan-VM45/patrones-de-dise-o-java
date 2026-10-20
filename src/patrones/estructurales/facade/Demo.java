@@ -1,23 +1,38 @@
 package patrones.estructurales.facade;
 
 public final class Demo {
-    public static void main(String[] args) {
-        Luces luces = new Luces();
-        Proyector proyector = new Proyector();
-        Audio audio = new Audio();
-        CineFacade cine = new CineFacade(luces, proyector, audio);
-        cine.verPelicula("Metropolis");
-        comprobar(luces.estanTenues(), "luces atenuadas");
-        comprobar(proyector.estaEncendido(), "proyector encendido");
-        comprobar(audio.getVolumen() == 80, "volumen configurado");
-        comprobar("Metropolis".equals(cine.getPeliculaActual()), "pelicula seleccionada");
-        System.out.println("Pedimos ver '" + cine.getPeliculaActual() + "' con una sola llamada a CineFacade.");
-        System.out.println("La fachada dejo las luces tenues: " + luces.estanTenues());
-        System.out.println("El proyector esta encendido: " + proyector.estaEncendido());
-        System.out.println("El volumen quedo en: " + audio.getVolumen());
-        System.out.println("CineFacade coordino los subsistemas por nosotros.");
+    static final class Inventario {
+        boolean hayExistencias(String isbn) { return "978-1".equals(isbn); }
+        void reservar(String isbn) { System.out.println("Inventario: reservado " + isbn); }
     }
-    private static void comprobar(boolean condicion, String detalle) {
-        if (!condicion) throw new AssertionError("Comprobacion fallida: " + detalle);
+    static final class Pagos {
+        boolean cobrar(String cliente, double total) {
+            System.out.println("Pago: cobrados $" + total + " a " + cliente);
+            return true;
+        }
+    }
+    static final class Envio {
+        void preparar(String cliente, String isbn) {
+            System.out.println("Envio: preparado " + isbn + " para " + cliente);
+        }
+    }
+    static final class CompraFacade {
+        private final Inventario inventario = new Inventario();
+        private final Pagos pagos = new Pagos();
+        private final Envio envio = new Envio();
+
+        String comprar(String cliente, String isbn, double precio) {
+            if (!inventario.hayExistencias(isbn)) return "No hay existencias";
+            inventario.reservar(isbn);
+            if (!pagos.cobrar(cliente, precio)) return "Pago rechazado";
+            envio.preparar(cliente, isbn);
+            return "Compra confirmada";
+        }
+    }
+
+    public static void main(String[] args) {
+        String resultado = new CompraFacade().comprar("Sofia", "978-1", 420);
+        if (!"Compra confirmada".equals(resultado)) throw new AssertionError("La compra debe completarse");
+        System.out.println(resultado + ". El cliente uso una sola operacion para coordinar los servicios.");
     }
 }

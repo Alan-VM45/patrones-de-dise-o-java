@@ -8,39 +8,16 @@ Este proyecto contiene ejemplos sencillos de los 23 patrones clasicos GoF. Las c
 
 Ayudan a decidir como se crean los objetos, sin repartir por todo el programa el detalle de usar `new`.
 
-- **Abstract Factory** (`abstractfactory`): crea familias de objetos compatibles.
-- **Builder** (`builder`): arma un objeto complejo paso a paso.
-- **Factory Method** (`factorymethod`): delega en una subclase la eleccion del objeto que se crea.
-- **Prototype** (`prototype`): crea un objeto copiando otro existente.
-- **Singleton** (`singleton`): ofrece una unica instancia compartida de una clase.
 
 ### 2. Estructurales: conectar y organizar objetos
 
 Muestran como combinar objetos o clases para formar estructuras utiles.
 
-- **Adapter** (`adapter`): adapta una interfaz para que dos componentes incompatibles colaboren.
-- **Bridge** (`bridge`): separa una funcionalidad de su implementacion.
-- **Composite** (`composite`): permite tratar un objeto individual y un grupo de objetos de la misma manera.
-- **Decorator** (`decorator`): agrega una responsabilidad envolviendo un objeto.
-- **Facade** (`facade`): ofrece una entrada simple a un subsistema complejo.
-- **Flyweight** (`flyweight`): comparte datos comunes para ahorrar memoria.
-- **Proxy** (`proxy`): controla el acceso a otro objeto.
 
 ### 3. De comportamiento: repartir tareas y comunicacion
 
 Definen como colaboran los objetos, quien hace cada trabajo y como se intercambian solicitudes o cambios.
 
-- **Chain of Responsibility** (`chain`): pasa una solicitud por varios manejadores posibles.
-- **Command** (`command`): convierte una accion en un objeto que puede ejecutarse despues.
-- **Interpreter** (`interpreter`): representa y evalua expresiones de una gramatica.
-- **Iterator** (`iterator`): recorre una coleccion sin revelar como esta almacenada.
-- **Mediator** (`mediator`): centraliza la comunicacion entre varios objetos.
-- **Memento** (`memento`): guarda y restaura un estado anterior.
-- **Observer** (`observer`): avisa a varios suscriptores cuando algo cambia.
-- **State** (`state`): cambia el comportamiento de un objeto segun su estado.
-- **Strategy** (`strategy`): permite cambiar un algoritmo por otro intercambiable.
-- **Template Method** (`templatemethod`): fija los pasos de un algoritmo y deja algunos pasos a las subclases.
-- **Visitor** (`visitor`): agrega operaciones a tipos de objetos sin poner esas operaciones dentro de cada tipo.
 
 ## Que es `Demo` y que es un constructor
 

@@ -1,39 +1,27 @@
 package patrones.creacionales.factorymethod;
 
-interface Documento {
-    String exportar(String contenido);
-}
-
-final class DocumentoPDF implements Documento {
-    public String exportar(String contenido) { return "PDF: " + contenido; }
-}
-
-final class DocumentoTexto implements Documento {
-    public String exportar(String contenido) { return "TXT: " + contenido; }
-}
-
-abstract class CreadorDocumento {
-    protected abstract Documento crearDocumento();
-
-    String exportar(String contenido) { return crearDocumento().exportar(contenido); }
-}
-
-final class CreadorPDF extends CreadorDocumento {
-    protected Documento crearDocumento() { return new DocumentoPDF(); }
-}
-
-final class CreadorTexto extends CreadorDocumento {
-    protected Documento crearDocumento() { return new DocumentoTexto(); }
-}
-
 public final class Demo {
+    interface Recibo { String generar(String numeroPedido, double total); }
+    static final class ReciboPDF implements Recibo {
+        public String generar(String numero, double total) { return "PDF pedido " + numero + " - Total: $" + total; }
+    }
+    static final class ReciboTexto implements Recibo {
+        public String generar(String numero, double total) { return "Pedido " + numero + " | Total $" + total; }
+    }
+    abstract static class GeneradorRecibo {
+        protected abstract Recibo crearRecibo();
+        String emitir(String numero, double total) { return crearRecibo().generar(numero, total); }
+    }
+    static final class GeneradorPDF extends GeneradorRecibo {
+        protected Recibo crearRecibo() { return new ReciboPDF(); }
+    }
+    static final class GeneradorTexto extends GeneradorRecibo {
+        protected Recibo crearRecibo() { return new ReciboTexto(); }
+    }
+
     public static void main(String[] args) {
-        String pdf = new CreadorPDF().exportar("informe");
-        String texto = new CreadorTexto().exportar("informe");
-        if (!"PDF: informe".equals(pdf) || !"TXT: informe".equals(texto)) {
-            throw new AssertionError("Cada creador debe producir su formato");
-        }
-        System.out.println("El creador PDF decide que documento crear: " + pdf);
-        System.out.println("El creador de texto decide que documento crear: " + texto);
+        System.out.println("Recibo para el mismo pedido, generado por cada canal:");
+        System.out.println(new GeneradorPDF().emitir("A-104", 650));
+        System.out.println(new GeneradorTexto().emitir("A-104", 650));
     }
 }

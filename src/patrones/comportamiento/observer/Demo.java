@@ -2,16 +2,26 @@ package patrones.comportamiento.observer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public final class Demo {
+    static final class Pedido {
+        private final List<Consumer<String>> observadores = new ArrayList<>();
+        private String estado = "Recibido";
+        void suscribir(Consumer<String> observador) { observadores.add(observador); }
+        void cambiarEstado(String nuevoEstado) {
+            estado = nuevoEstado;
+            for (Consumer<String> observador : observadores) observador.accept(estado);
+        }
+    }
+
     public static void main(String[] args) {
-        CanalYoutube canal = new CanalYoutube();
-        List<String> recibidos = new ArrayList<>();
-        canal.suscribir(recibidos::add);
-        canal.subirVideo("Patrones en Java");
-        if (!recibidos.equals(List.of("Patrones en Java"))) throw new AssertionError("Fallo de notificacion");
-        System.out.println("El canal publica: Patrones en Java");
-        System.out.println("Suscriptor notificado: " + recibidos.get(0));
-        System.out.println("El canal aviso automaticamente a quien estaba suscrito.");
+        Pedido pedido = new Pedido();
+        List<String> avisos = new ArrayList<>();
+        pedido.suscribir(avisos::add);
+        pedido.cambiarEstado("Enviado");
+        pedido.cambiarEstado("Entregado");
+        System.out.println("El pedido cambia de estado; el cliente recibe automaticamente:");
+        for (String aviso : avisos) System.out.println("- Tu pedido esta " + aviso);
     }
 }

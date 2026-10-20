@@ -3,37 +3,22 @@ package patrones.comportamiento.mediator;
 import java.util.ArrayList;
 import java.util.List;
 
-final class MediadorChat {
-    private final List<String> mensajes = new ArrayList<>();
-
-    void enviar(String usuario, String mensaje) { mensajes.add(usuario + ": " + mensaje); }
-    List<String> getMensajes() { return mensajes; }
-}
-
-final class UsuarioChat {
-    private final String nombre;
-    private final MediadorChat mediador;
-
-    UsuarioChat(String nombre, MediadorChat mediador) {
-        this.nombre = nombre;
-        this.mediador = mediador;
-    }
-
-    void enviar(String mensaje) { mediador.enviar(nombre, mensaje); }
+final class CoordinadorCheckout {
+    private final List<String> eventos = new ArrayList<>();
+    void actualizarDireccion(String direccion) { eventos.add("Direccion: " + direccion); }
+    void seleccionarEnvio(String envio) { eventos.add("Envio: " + envio); }
+    void seleccionarPago(String pago) { eventos.add("Pago: " + pago); }
+    List<String> getEventos() { return eventos; }
 }
 
 public final class Demo {
     public static void main(String[] args) {
-        MediadorChat chat = new MediadorChat();
-        UsuarioChat ana = new UsuarioChat("Ana", chat);
-        UsuarioChat luis = new UsuarioChat("Luis", chat);
-        ana.enviar("Hola, Luis");
-        luis.enviar("Hola, Ana");
-        if (!chat.getMensajes().equals(List.of("Ana: Hola, Luis", "Luis: Hola, Ana"))) {
-            throw new AssertionError("El mediador debe registrar los mensajes");
-        }
-        System.out.println("Ana y Luis envian mensajes a traves del mediador:");
-        for (String mensaje : chat.getMensajes()) System.out.println("- " + mensaje);
-        System.out.println("Los usuarios se comunican con el mediador, no directamente entre si.");
+        CoordinadorCheckout checkout = new CoordinadorCheckout();
+        checkout.actualizarDireccion("Calle Sol 20");
+        checkout.seleccionarEnvio("Entrega express");
+        checkout.seleccionarPago("Tarjeta terminada en 1234");
+        System.out.println("El checkout coordina los componentes del formulario:");
+        for (String evento : checkout.getEventos()) System.out.println("- " + evento);
+        System.out.println("Cada componente informa al coordinador, no necesita conocer a los demas.");
     }
 }

@@ -20,15 +20,28 @@ final class ServicioProxy implements ServicioDatos {
 }
 
 public final class Demo {
-    public static void main(String[] args) {
-        ServicioProxy proxy = new ServicioProxy();
-        if (proxy.estaCargado()) throw new AssertionError("La carga debe ser diferida");
-        System.out.println("Antes de consultar, el servicio real esta cargado: " + proxy.estaCargado());
-        String datos = proxy.consultar();
-        if (!"Datos del servidor".equals(datos) || !proxy.estaCargado()) {
-            throw new AssertionError("El proxy debe controlar el acceso");
+    interface Ficha { String descripcion(); }
+    static final class FichaRemota implements Ficha {
+        private final String isbn;
+        FichaRemota(String isbn) { this.isbn = isbn; }
+        public String descripcion() { return "Descripcion completa del libro " + isbn; }
+    }
+    static final class FichaConProxy implements Ficha {
+        private final String isbn;
+        private FichaRemota fichaReal;
+        FichaConProxy(String isbn) { this.isbn = isbn; }
+        public String descripcion() {
+            if (fichaReal == null) {
+                System.out.println("Proxy: carga la ficha detallada solo cuando alguien la solicita.");
+                fichaReal = new FichaRemota(isbn);
+            }
+            return fichaReal.descripcion();
         }
-        System.out.println("El cliente consulta a traves del proxy y recibe: " + datos);
-        System.out.println("Despues de la consulta, el servicio real esta cargado: " + proxy.estaCargado());
+    }
+
+    public static void main(String[] args) {
+        FichaConProxy ficha = new FichaConProxy("978-1");
+        System.out.println("La lista del catalogo se muestra sin descargar la descripcion completa.");
+        System.out.println("El cliente abre el libro: " + ficha.descripcion());
     }
 }

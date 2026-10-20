@@ -7,13 +7,13 @@ public abstract class Manejador {
         return siguiente;
     }
     public final String manejar(Solicitud solicitud) {
-        System.out.println(nombre() + " recibe la solicitud de $" + solicitud.getMonto() + ".");
+        System.out.println(nombre() + " recibe el pedido mayorista de $" + solicitud.getMonto() + ".");
         if (puedeResolver(solicitud)) {
-            System.out.println(nombre() + " puede resolverla y la aprueba.");
+            System.out.println(nombre() + " tiene autoridad para aprobarlo.");
             return nombre();
         }
-        System.out.println(nombre() + " no puede resolverla; la pasa al siguiente responsable.");
-        if (siguiente == null) throw new IllegalArgumentException("Ningun responsable puede resolver la solicitud");
+        System.out.println(nombre() + " no tiene autoridad para ese monto; lo pasa al siguiente responsable.");
+        if (siguiente == null) throw new IllegalArgumentException("Ningun responsable puede aprobar el pedido");
         return siguiente.manejar(solicitud);
     }
     protected abstract boolean puedeResolver(Solicitud solicitud);

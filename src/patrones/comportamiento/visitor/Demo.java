@@ -1,47 +1,48 @@
 package patrones.comportamiento.visitor;
 
 interface Visitante {
-    double visitarProducto(Producto producto);
-    double visitarServicio(Servicio servicio);
+    String visitarLibroImpreso(LibroImpreso libro);
+    String visitarLibroDigital(LibroDigital libro);
 }
 
-interface ElementoComercial {
-    double aceptar(Visitante visitante);
+interface Libro {
+    String aceptar(Visitante visitante);
 }
 
-final class Producto implements ElementoComercial {
-    private final double precio;
+final class LibroImpreso implements Libro {
+    private final String titulo;
+    private final int paginas;
 
-    Producto(double precio) { this.precio = precio; }
-    double getPrecio() { return precio; }
-    public double aceptar(Visitante visitante) { return visitante.visitarProducto(this); }
+    LibroImpreso(String titulo, int paginas) { this.titulo = titulo; this.paginas = paginas; }
+    String getTitulo() { return titulo; }
+    int getPaginas() { return paginas; }
+    public String aceptar(Visitante visitante) { return visitante.visitarLibroImpreso(this); }
 }
 
-final class Servicio implements ElementoComercial {
-    private final double tarifa;
+final class LibroDigital implements Libro {
+    private final String titulo;
+    private final double megabytes;
 
-    Servicio(double tarifa) { this.tarifa = tarifa; }
-    double getTarifa() { return tarifa; }
-    public double aceptar(Visitante visitante) { return visitante.visitarServicio(this); }
+    LibroDigital(String titulo, double megabytes) { this.titulo = titulo; this.megabytes = megabytes; }
+    String getTitulo() { return titulo; }
+    double getMegabytes() { return megabytes; }
+    public String aceptar(Visitante visitante) { return visitante.visitarLibroDigital(this); }
 }
 
-final class CalculadorImpuestos implements Visitante {
-    public double visitarProducto(Producto producto) { return producto.getPrecio() * 0.16; }
-    public double visitarServicio(Servicio servicio) { return servicio.getTarifa() * 0.10; }
+final class GeneradorFichaCatalogo implements Visitante {
+    public String visitarLibroImpreso(LibroImpreso libro) {
+        return libro.getTitulo() + " | impreso | " + libro.getPaginas() + " paginas";
+    }
+    public String visitarLibroDigital(LibroDigital libro) {
+        return libro.getTitulo() + " | digital | " + libro.getMegabytes() + " MB";
+    }
 }
 
 public final class Demo {
     public static void main(String[] args) {
-        Visitante impuestos = new CalculadorImpuestos();
-        Producto producto = new Producto(100);
-        Servicio servicio = new Servicio(100);
-        double impuestoProducto = producto.aceptar(impuestos);
-        double impuestoServicio = servicio.aceptar(impuestos);
-        if (impuestoProducto != 16.0 || impuestoServicio != 10.0) {
-            throw new AssertionError("Calculo por tipo de elemento");
-        }
-        System.out.println("Impuesto sobre producto de $" + producto.getPrecio() + ": $" + impuestoProducto);
-        System.out.println("Impuesto sobre servicio de $" + servicio.getTarifa() + ": $" + impuestoServicio);
-        System.out.println("El visitante aplica una operacion distinta segun el tipo de elemento.");
+        Libro[] libros = {new LibroImpreso("Java practico", 320), new LibroDigital("Patrones GoF", 4.5)};
+        Visitante fichas = new GeneradorFichaCatalogo();
+        System.out.println("El visitante genera fichas distintas sin modificar las clases de libro:");
+        for (Libro libro : libros) System.out.println("- " + libro.aceptar(fichas));
     }
 }

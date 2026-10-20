@@ -1,21 +1,32 @@
 package patrones.creacionales.prototype;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class Demo {
-    public static void main(String[] args) {
-        Documento original = new Documento("contrato");
-        original.agregarDato("usuario", "Ana");
-        System.out.println("Original antes de copiar: contrato para " + original.getDato("usuario"));
-        Documento copia = original.clone();
-        System.out.println("Se clono el documento. Original y copia son objetos distintos: " + (original != copia));
-        copia.agregarDato("usuario", "Luis");
-        comprobar("Ana".equals(original.getDato("usuario")), "la copia no modifica el original");
-        comprobar("Luis".equals(copia.getDato("usuario")), "la copia conserva su dato");
-        comprobar(original != copia, "instancias distintas");
-        System.out.println("Despues de editar la copia:");
-        System.out.println("  Original: contrato para " + original.getDato("usuario"));
-        System.out.println("  Copia:    contrato para " + copia.getDato("usuario"));
+    static final class PlantillaPedido implements Cloneable {
+        private final String cliente;
+        private final List<String> libros;
+
+        PlantillaPedido(String cliente, List<String> libros) {
+            this.cliente = cliente;
+            this.libros = new ArrayList<>(libros);
+        }
+
+        void agregarLibro(String libro) { libros.add(libro); }
+        String resumen() { return cliente + " compra " + String.join(", ", libros); }
+
+        public PlantillaPedido clone() {
+            return new PlantillaPedido(cliente, libros);
+        }
     }
-    private static void comprobar(boolean condicion, String detalle) {
-        if (!condicion) throw new AssertionError("Comprobacion fallida: " + detalle);
+
+    public static void main(String[] args) {
+        PlantillaPedido original = new PlantillaPedido("Mateo", List.of("Java basico"));
+        PlantillaPedido siguienteCompra = original.clone();
+        siguienteCompra.agregarLibro("Patrones de diseno");
+        System.out.println("Plantilla guardada: " + original.resumen());
+        System.out.println("Pedido nuevo basado en la plantilla: " + siguienteCompra.resumen());
+        System.out.println("La copia es independiente: " + (original != siguienteCompra));
     }
 }

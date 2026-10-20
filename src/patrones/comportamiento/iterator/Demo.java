@@ -3,40 +3,35 @@ package patrones.comportamiento.iterator;
 import java.util.Arrays;
 import java.util.List;
 
-final class IteradorPalabras {
-    private final List<String> palabras;
+final class IteradorCatalogo {
+    private final List<String> titulos;
     private int posicion;
 
-    IteradorPalabras(List<String> palabras) { this.palabras = palabras; }
+    IteradorCatalogo(List<String> titulos) { this.titulos = titulos; }
 
-    boolean tieneSiguiente() { return posicion < palabras.size(); }
+    boolean tieneSiguiente() { return posicion < titulos.size(); }
 
     String siguiente() {
         if (!tieneSiguiente()) throw new IllegalStateException("No quedan elementos");
-        return palabras.get(posicion++);
+        return titulos.get(posicion++);
     }
 }
 
-final class ColeccionPalabras {
-    private final List<String> palabras;
+final class Catalogo {
+    private final List<String> titulos;
 
-    ColeccionPalabras(String... palabras) { this.palabras = Arrays.asList(palabras); }
+    Catalogo(String... titulos) { this.titulos = Arrays.asList(titulos); }
 
-    IteradorPalabras iterador() { return new IteradorPalabras(palabras); }
+    IteradorCatalogo iterador() { return new IteradorCatalogo(titulos); }
 }
 
 public final class Demo {
     public static void main(String[] args) {
-        IteradorPalabras iterador = new ColeccionPalabras("uno", "dos").iterador();
-        System.out.println("Recorriendo la coleccion sin acceder a su lista interna:");
-        String[] esperadas = {"uno", "dos"};
-        int indice = 0;
+        IteradorCatalogo iterador = new Catalogo("Java practico", "Diseno de software", "Bases de datos").iterador();
+        System.out.println("La tienda recorre el catalogo sin exponer su lista interna:");
         while (iterador.tieneSiguiente()) {
-            String palabra = iterador.siguiente();
-            System.out.println("- " + palabra);
-            if (!esperadas[indice++].equals(palabra)) throw new AssertionError("Orden del iterador");
+            System.out.println("- " + iterador.siguiente());
         }
-        if (indice != esperadas.length) throw new AssertionError("Faltan elementos");
-        System.out.println("Fin del recorrido: no quedan elementos.");
+        System.out.println("Fin del catalogo.");
     }
 }

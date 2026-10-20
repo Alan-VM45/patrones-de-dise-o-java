@@ -4,37 +4,38 @@ interface Comando {
     void ejecutar();
 }
 
-final class Luz {
-    private boolean encendida;
-
-    void encender() { encendida = true; }
-    boolean estaEncendida() { return encendida; }
+final class Carrito {
+    private final java.util.List<String> libros = new java.util.ArrayList<>();
+    void agregar(String libro) { libros.add(libro); }
+    java.util.List<String> getLibros() { return libros; }
 }
 
-final class EncenderLuz implements Comando {
-    private final Luz luz;
+final class AgregarLibro implements Comando {
+    private final Carrito carrito;
+    private final String libro;
 
-    EncenderLuz(Luz luz) { this.luz = luz; }
+    AgregarLibro(Carrito carrito, String libro) { this.carrito = carrito; this.libro = libro; }
 
-    public void ejecutar() { luz.encender(); }
+    public void ejecutar() { carrito.agregar(libro); }
 }
 
-final class Interruptor {
+final class BotonAgregarAlCarrito {
     private final Comando comando;
 
-    Interruptor(Comando comando) { this.comando = comando; }
+    BotonAgregarAlCarrito(Comando comando) { this.comando = comando; }
 
-    void presionar() { comando.ejecutar(); }
+    void pulsar() { comando.ejecutar(); }
 }
 
 public final class Demo {
     public static void main(String[] args) {
-        Luz luz = new Luz();
-        Interruptor interruptor = new Interruptor(new EncenderLuz(luz));
-        System.out.println("Estado inicial de la luz: " + (luz.estaEncendida() ? "encendida" : "apagada"));
-        System.out.println("Se presiona el interruptor; este ejecuta el comando EncenderLuz.");
-        interruptor.presionar();
-        if (!luz.estaEncendida()) throw new AssertionError("El comando debe encender la luz");
-        System.out.println("Estado final de la luz: " + (luz.estaEncendida() ? "encendida" : "apagada"));
+        Carrito carrito = new Carrito();
+        Comando agregar = new AgregarLibro(carrito, "Java practico");
+        BotonAgregarAlCarrito boton = new BotonAgregarAlCarrito(agregar);
+        System.out.println("Antes de pulsar, el carrito contiene: " + carrito.getLibros());
+        boton.pulsar();
+        if (!carrito.getLibros().contains("Java practico")) throw new AssertionError("El comando debe agregar el libro");
+        System.out.println("Despues de pulsar Agregar al carrito: " + carrito.getLibros());
+        System.out.println("El boton ejecuta el comando sin necesitar saber como se modifica el carrito.");
     }
 }

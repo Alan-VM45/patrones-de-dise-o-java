@@ -3,44 +3,48 @@ package patrones.estructurales.flyweight;
 import java.util.HashMap;
 import java.util.Map;
 
-final class Estilo {
-    private final String fuente;
-    private final int tamano;
+final class DatosCatalogo {
+    private final String isbn;
+    private final String titulo;
+    private final String autor;
 
-    Estilo(String fuente, int tamano) { this.fuente = fuente; this.tamano = tamano; }
+    DatosCatalogo(String isbn, String titulo, String autor) {
+        this.isbn = isbn;
+        this.titulo = titulo;
+        this.autor = autor;
+    }
 
-    String describir(String texto) { return texto + " (" + fuente + ", " + tamano + ")"; }
+    String describir() { return titulo + " de " + autor + " (ISBN " + isbn + ")"; }
 }
 
-final class FabricaEstilos {
-    private final Map<String, Estilo> estilos = new HashMap<>();
+final class FabricaCatalogo {
+    private final Map<String, DatosCatalogo> libros = new HashMap<>();
 
-    Estilo obtener(String fuente, int tamano) {
-        String clave = fuente + ":" + tamano;
-        if (!estilos.containsKey(clave)) estilos.put(clave, new Estilo(fuente, tamano));
-        return estilos.get(clave);
+    DatosCatalogo obtener(String isbn, String titulo, String autor) {
+        if (!libros.containsKey(isbn)) libros.put(isbn, new DatosCatalogo(isbn, titulo, autor));
+        return libros.get(isbn);
     }
 }
 
-final class Texto {
-    private final String contenido;
-    private final Estilo estilo;
+final class Ejemplar {
+    private final String codigoEjemplar;
+    private final DatosCatalogo libro;
 
-    Texto(String contenido, Estilo estilo) { this.contenido = contenido; this.estilo = estilo; }
+    Ejemplar(String codigoEjemplar, DatosCatalogo libro) { this.codigoEjemplar = codigoEjemplar; this.libro = libro; }
 
-    String mostrar() { return estilo.describir(contenido); }
-    Estilo getEstilo() { return estilo; }
+    String mostrar() { return codigoEjemplar + ": " + libro.describir(); }
+    DatosCatalogo getLibro() { return libro; }
 }
 
 public final class Demo {
     public static void main(String[] args) {
-        FabricaEstilos fabrica = new FabricaEstilos();
-        Texto primero = new Texto("Hola", fabrica.obtener("Serif", 12));
-        Texto segundo = new Texto("Mundo", fabrica.obtener("Serif", 12));
-        if (primero.getEstilo() != segundo.getEstilo()) throw new AssertionError("El estilo debe compartirse");
+        FabricaCatalogo fabrica = new FabricaCatalogo();
+        Ejemplar primero = new Ejemplar("COPIA-01", fabrica.obtener("978-1", "Java para principiantes", "Ana Ruiz"));
+        Ejemplar segundo = new Ejemplar("COPIA-02", fabrica.obtener("978-1", "Java para principiantes", "Ana Ruiz"));
+        if (primero.getLibro() != segundo.getLibro()) throw new AssertionError("Los datos del libro deben compartirse");
         System.out.println(primero.mostrar());
         System.out.println(segundo.mostrar());
-        System.out.println("Ambos textos comparten el mismo objeto de estilo: "
-            + (primero.getEstilo() == segundo.getEstilo()));
+        System.out.println("Son dos ejemplares fisicos, pero comparten los mismos datos de catalogo: "
+            + (primero.getLibro() == segundo.getLibro()));
     }
 }
